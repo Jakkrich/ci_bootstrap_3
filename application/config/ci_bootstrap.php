@@ -5,9 +5,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | -------------------------------------------------------------------------
 | CI Bootstrap 3 Configuration
 | -------------------------------------------------------------------------
-| This file lets you define default values to be passed into views 
-| when calling MY_Controller's render() function. 
-| 
+| This file lets you define default values to be passed into views
+| when calling MY_Controller's render() function.
+|
 | See example and detailed explanation from:
 | 	/application/config/ci_bootstrap_example.php
 */
@@ -15,7 +15,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 $config['ci_bootstrap'] = array(
 
 	// Site name
-	'site_name' => 'CI Bootstrap 3',
+	'site_name' => 'API Doc',
 
 	// Default page title prefix
 	'page_title_prefix' => '',
@@ -50,41 +50,33 @@ $config['ci_bootstrap'] = array(
 
 	// Default CSS class for <body> tag
 	'body_class' => '',
-	
+
 	// Multilingual settings
-	'languages' => array(
-		'default'		=> 'en',
-		'autoload'		=> array('general'),
-		'available'		=> array(
-			'en' => array(
-				'label'	=> 'English',
-				'value'	=> 'english'
-			),
-			'zh' => array(
-				'label'	=> '繁體中文',
-				'value'	=> 'traditional-chinese'
-			),
-			'cn' => array(
-				'label'	=> '简体中文',
-				'value'	=> 'simplified-chinese'
-			),
-			'es' => array(
-				'label'	=> 'Español',
-				'value' => 'spanish'
-			)
-		)
-	),
+	// 'languages' => array(
+	// 	'default'		=> 'en',
+	// 	'autoload'		=> array('general'),
+	// 	'available'		=> array(
+	// 		'en' => array(
+	// 			'label'	=> 'English',
+	// 			'value'	=> 'english'
+	// 		),
+	// 		// 'th' => array(
+	// 		// 	'label'	=> 'ไทย',
+	// 		// 	'value'	=> 'thai'
+	// 		// ),
+	// 	)
+	// ),
 
 	// Google Analytics User ID
 	'ga_id' => '',
 
 	// Menu items
-	'menu' => array(
-		'home' => array(
-			'name'		=> 'Home',
-			'url'		=> '',
-		),
-	),
+	// 'menu' => array(
+	// 	'home' => array(
+	// 		'name'		=> 'API Doc',
+	// 		'url'		=> 'api',
+	// 	),
+	// ),
 
 	// Login page
 	'login_url' => '',
@@ -95,10 +87,10 @@ $config['ci_bootstrap'] = array(
 
 	// Email config
 	'email' => array(
-		'from_email'		=> '',
+		'from_email'		=> 'noreply@nstda.or.th',
 		'from_name'			=> '',
 		'subject_prefix'	=> '',
-		
+
 		// Mailgun HTTP API
 		'mailgun_api'		=> array(
 			'domain'			=> '',

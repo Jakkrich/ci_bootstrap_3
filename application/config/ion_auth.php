@@ -23,7 +23,7 @@
 
 /**
  * Changes by CI Bootstrap 3 (https://github.com/waifung0207/ci_bootstrap_3).
- * 
+ *
  * The following values are changed to fit with CI Bootstrap:
  *  - $config['site_title'] = 'CI Bootstrap'; (default: 'Example.com')
  * 	- $config['email_templates'] = 'email/auth/'; (default: 'auth/email/')
@@ -93,7 +93,7 @@ $config['salt_prefix']    = version_compare(PHP_VERSION, '5.3.7', '<') ? '$2a$' 
  | The controller should check this function and act
  | appropriately. If this variable set to 0, there is no maximum.
  */
-$config['site_title']                 = "CI Bootstrap";      // Site Title, example.com
+$config['site_title']                 = "CI-API";      // Site Title, example.com
 $config['admin_email']                = "admin@example.com"; // Admin Email, admin@example.com
 $config['default_group']              = 'members';           // Default group, use name
 $config['admin_group']                = 'admin';             // Default administrators group, use name
@@ -141,7 +141,7 @@ $config['email_config'] = array(
  | Folder where email templates are stored.
  | Default: auth/
  */
-$config['email_templates'] = 'email/auth/';
+$config['email_templates'] = 'auth/email/';
 
 /*
  | -------------------------------------------------------------------------
@@ -149,7 +149,7 @@ $config['email_templates'] = 'email/auth/';
  | -------------------------------------------------------------------------
  | Default: activate.tpl.php
  */
-$config['email_activate'] = 'activate.php';
+$config['email_activate'] = 'activate.tpl.php';
 
 /*
  | -------------------------------------------------------------------------
@@ -157,7 +157,7 @@ $config['email_activate'] = 'activate.php';
  | -------------------------------------------------------------------------
  | Default: forgot_password.tpl.php
  */
-$config['email_forgot_password'] = 'forgot_password.php';
+$config['email_forgot_password'] = 'forgot_password.tpl.php';
 
 /*
  | -------------------------------------------------------------------------
@@ -165,7 +165,7 @@ $config['email_forgot_password'] = 'forgot_password.php';
  | -------------------------------------------------------------------------
  | Default: new_password.tpl.php
  */
-$config['email_forgot_password_complete'] = 'new_password.php';
+$config['email_forgot_password_complete'] = 'new_password.tpl.php';
 
 /*
  | -------------------------------------------------------------------------

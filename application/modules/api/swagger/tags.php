@@ -10,7 +10,14 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
  * @SWG\Tag(
- *   name="user",
- *   description="Everything about users"
+ *   name="dummy",
+ *   description="Dummy endpoints"
  * )
  */
+
+ /**
+  * @SWG\Tag(
+  *   name="key",
+  *   description="Install api master key."
+  * )
+  */

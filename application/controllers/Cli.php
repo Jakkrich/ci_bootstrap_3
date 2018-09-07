@@ -17,7 +17,7 @@ class Cli extends MX_Controller {
 			show_404();
 		}
 	}
-	
+
 	// Run daily cron job
 	// Command: php index.php cli daily
 	public function daily()
@@ -73,22 +73,15 @@ class Cli extends MX_Controller {
 		$this->load->dbutil();
 		$this->load->helper('file');
 		$prefs = array('format' => 'txt');
-		
-		// Ion Auth
-		$prefs['tables'] = array('groups', 'login_attempts', 'users', 'users_groups');
+
+		// API
+		$prefs['tables'] = array('api_access', 'api_keys', 'api_limits', 'api_logs');
 		$backup = $this->dbutil->backup($prefs);
-		$file_path = FCPATH.'sql/core/ion_auth.sql';
-		write_file($file_path, $backup);
-		echo 'Database saved to: '.$file_path.PHP_EOL;
-		
-		// Ion Auth (for Admin Panel)
-		$prefs['tables'] = array('admin_groups', 'admin_login_attempts', 'admin_users', 'admin_users_groups');
-		$backup = $this->dbutil->backup($prefs);
-		$file_path = FCPATH.'sql/core/ion_auth_admin.sql';
+		$file_path = FCPATH.'sql/core/api.sql';
 		write_file($file_path, $backup);
 		echo 'Database saved to: '.$file_path.PHP_EOL;
 	}
-	
+
 	// Reset database to default (i.e. from /sql/latest.sql)
 	// Command: php index.php cli reset_db
 	public function reset_db()

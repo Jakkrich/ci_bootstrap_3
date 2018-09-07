@@ -7,7 +7,7 @@
  * 	- API_Controller: for API Site, extends from REST_Controller
  */
 class MY_Controller extends MX_Controller {
-	
+
 	// Values to be obtained automatically from router
 	protected $mModule = '';			// module name (empty = Frontend Website)
 	protected $mCtrler = 'home';		// current controller
@@ -53,7 +53,7 @@ class MY_Controller extends MX_Controller {
 		$this->mCtrler = $this->router->fetch_class();
 		$this->mAction = $this->router->fetch_method();
 		$this->mMethod = $this->input->server('REQUEST_METHOD');
-		
+
 		// initial setup
 		$this->_setup();
 	}
@@ -62,7 +62,7 @@ class MY_Controller extends MX_Controller {
 	private function _setup()
 	{
 		$config = $this->config->item('ci_bootstrap');
-		
+
 		// load default values
 		$this->mBaseUrl = empty($this->mModule) ? base_url() : base_url($this->mModule).'/';
 		$this->mSiteName = empty($config['site_name']) ? '' : $config['site_name'];
@@ -102,7 +102,7 @@ class MY_Controller extends MX_Controller {
 
 			$this->mLanguage = $language;
 		}
-		
+
 		// restrict pages
 		$uri = ($this->mAction=='index') ? $this->mCtrler : $this->mCtrler.'/'.$this->mAction;
 		if ( !empty($this->mPageAuth[$uri]) && !$this->ion_auth->in_group($this->mPageAuth[$uri]) )
@@ -128,7 +128,7 @@ class MY_Controller extends MX_Controller {
 				$this->mUserGroups = $this->ion_auth->get_users_groups($this->mUser->id)->result();
 
 				// TODO: get group with most permissions (instead of getting first group)
-				$this->mUserMainGroup = $this->mUserGroups[0]->name;	
+				$this->mUserMainGroup = $this->mUserGroups[0]->name;
 			}
 		}
 
@@ -156,7 +156,7 @@ class MY_Controller extends MX_Controller {
 		{
 			if ( $redirect_url==NULL )
 				$redirect_url = $this->mConfig['login_url'];
-			
+
 			redirect($redirect_url);
 		}
 	}
@@ -255,7 +255,7 @@ class MY_Controller extends MX_Controller {
 			->set_status_header($code)
 			->set_content_type('application/json')
 			->set_output(json_encode($data));
-			
+
 		// force output immediately and interrupt other scripts
 		global $OUT;
 		$OUT->_display();
@@ -276,5 +276,4 @@ class MY_Controller extends MX_Controller {
 }
 
 // include base controllers
-require APPPATH."core/controllers/Admin_Controller.php";
 require APPPATH."core/controllers/Api_Controller.php";
