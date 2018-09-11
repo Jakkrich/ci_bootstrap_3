@@ -23,7 +23,7 @@ $(function () {
 					clientId: "your-client-id",
 					clientSecret: "your-client-secret-if-required",
 					realm: "your-realms",
-					appName: "your-app-name", 
+					appName: "your-app-name",
 					scopeSeparator: ",",
 					additionalQueryStringParams: {}
 				});
@@ -86,12 +86,14 @@ $(function () {
 	<div class="swagger-ui-wrap">
 		<a id="logo" href=""><?php echo $site_name; ?></a>
 		<form id='api_selector'>
-			<div class='input'><input placeholder="http://example.com/api" id="input_baseUrl" name="baseUrl" type="text"/></div>
-			<div class='input'><input placeholder="api_key" id="input_apiKey" name="apiKey" type="text"/></div>
-			<div class='input'><a id="explore" href="#" data-sw-translate>Explore</a></div>
+			<div class='input' style="display:none;"><input placeholder="http://example.com/api" id="input_baseUrl" name="baseUrl" type="text"/></div>
+			<div class='input' style="display:none;"><input placeholder="api_key" id="input_apiKey" name="apiKey" type="text"/></div>
+			<div class='input' style="display:none;"><a id="explore" href="#" data-sw-translate>Explore</a></div>
 		</form>
 	</div>
 </div>
 
 <div id="message-bar" class="swagger-ui-wrap" data-sw-translate>&nbsp;</div>
+<div class="swagger-ui-wrap" data-sw-translate><div class="info_title">BASE URL: <?php echo site_url('api'); ?></div><br/></div>
+
 <div id="swagger-ui-container" class="swagger-ui-wrap"></div>

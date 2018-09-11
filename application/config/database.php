@@ -3,10 +3,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 $active_group = 'default';
 $query_builder = TRUE;
-$hostname ="{HOSTNAME}";
-$username ="{USERNAME}";
-$password ="{PASSWORD}";
-$database ="{DATABASE}";
+$hostname ="localhost";
+$username ="root";
+$password ="";
+$database ="ci_bootstrap_3";
 
 $db['default'] = array(
 	'dsn'	=> 'mysql:host='.$hostname.';dbname='.$database.';username='.$username.';password='.$password,

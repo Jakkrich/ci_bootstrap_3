@@ -14,6 +14,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  */
 class Dummy extends API_Controller {
 
+	protected $mUseIdentityByApiKey = FALSE;
 	/**
 	 * @SWG\Get(
 	 * 	path="/dummy",
@@ -78,8 +79,8 @@ class Dummy extends API_Controller {
 	 */
 	public function index_post()
 	{
-		$params = elements(array('filter', 'valid', 'fields', 'here'), $this->post());
-		$this->created();
+		$data = array('id' => $this->post('id'), 'name' => 'Dummy '. $this->post('id'));
+		$this->response($data);
 	}
 
 	/**

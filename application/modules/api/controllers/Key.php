@@ -13,6 +13,12 @@ class Key extends API_Controller {
 	// Don't User API KEY = FALSE
 	protected $mUseIdentityByApiKey = FALSE;
 
+	public function __construct()
+	{
+		parent::__construct();
+		$this->load->library('mycrypt');
+	}
+
 	public function index_get()
 	{
 		redirect('api');
@@ -28,24 +34,26 @@ class Key extends API_Controller {
 		}
 	}
 
-	private function autogen_apikey($val){
-		$this->load->library ('mycrypt');
+	private function autogen_apikey($create=NULL){
 		$api = $this->mycrypt->generate_api();
 
-		$config_myrestaccounte_path = APPPATH."config/api_master_key.php";
-		$config_file = file_get_contents($config_myrestaccounte_path);
-		$config_file = str_replace($val, $api, $config_file);
-		file_put_contents($config_myrestaccounte_path, $config_file);
-
-		$data = array(
-			'api_master_key'=>$api,
-		);
-		$data_json = [
-			'status'=>'success',
-			'data'=>array('api_master_key'=>$api,),
-			'message'=>'Generate API Master Key Success!'
-		];
-		$this->response($data_json);
+		$ok = $this->api_keys->update(array(
+			'key'=>$api,
+			'user_id'=>1,
+		), 1);
+		if($ok){
+			$data = array(
+				'api_master_key'=>$api,
+			);
+			$data_json = [
+				'status'=>'success',
+				'data'=>array('api_master_key'=>$api,),
+				'message'=>'Generate API Master Key Success!'
+			];
+			$this->response($data_json);
+		}else{
+			return False;
+		}
 	}
 
 	/**
@@ -68,26 +76,26 @@ class Key extends API_Controller {
 	*/
 	public function install_get(){
 		// set random enter_encryption_key
-		$config_path = APPPATH."config/mycrypt.php";
-		if ($this->get_contents($config_path, "{ENTER_PRIVATE_KEY}")) {
+		$config_path = APPPATH."config/config.php";
+		if ($this->get_contents($config_path, "{ENTER_ENCRYPTION_KEY}")) {
 			$data_json = [
 				'status'=>'error',
 				'data'=> null,
-				'message'=>"Seems this ". '$config[\'mycrypt_private_key\']'." is not already specify! Please specify to [application/config/mycrypt.php]"
+				'message'=>"Seems this ". '$config[\'encryption_key\']'." is not already specify! Please specify to [application/config/config.php]"
 			];
 			$this->response($data_json);
 		}
 
-		$config_path = APPPATH."config/api_master_key.php";
-		if ($this->get_contents($config_path, "{GENERATE_ONLY_BY_API}")) {
-			$this->autogen_apikey('{GENERATE_ONLY_BY_API}');
-		}else {
+		$row = $this->api_keys->where('id', 1)->get();
+		if(!empty($row)){
 			$data_json = [
 				'status'=>'error',
 				'data'=> null,
 				'message'=>"Seems this API Master Key is already generated! You can't regenerated it again."
 			];
 			$this->response($data_json);
+		}else{
+			$this->autogen_apikey();
 		}
 	}
 
@@ -121,21 +129,25 @@ class Key extends API_Controller {
 	* )
 	*/
 	public function reinstall_get($old_key=NULL){
-		$this->load->config('api_master_key');
-		$api_master_key = $this->config->item('api_master_key');
-
-		if($old_key==NULL || $old_key!=$api_master_key){
-			$data_json = [
-				'status'=>'error',
-				'data'=> null,
-				'message'=>"Invalid Old Key."
-			];
+		$data_json = [
+			'status'=>'error',
+			'data'=> [],
+			'message'=>"Invalid Old Key."
+		];
+		$pass = $this->mycrypt->ValidateAPI($old_key);
+		if($pass !== TRUE){
 			$this->response($data_json, 404);
 		}
 
-		$config_path = APPPATH."config/api_master_key.php";
-		if ($this->get_contents($config_path, $old_key)) {
-			$this->autogen_apikey($old_key);
+		$row = $this->api_keys->where('id', 1)->get();
+		if(!empty($row)){
+			if($row['key'] == $old_key){
+				$this->autogen_apikey();
+			}else{
+				$this->response($data_json, 404);
+			}
+		}else{
+			$this->response($data_json, 404);
 		}
 	}
 }

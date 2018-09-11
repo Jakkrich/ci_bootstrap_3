@@ -22,5 +22,7 @@ $autoload['config'] = array();
 $autoload['language'] = array();
 
 $autoload['model'] = array(
-	'api_key_model'		=> 'api_keys',
+	'api_key_model'=>'api_keys',
+	'user_model'=>'users',
+	'group_model'=>'groups',
 );

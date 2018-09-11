@@ -17,7 +17,7 @@ class Mycrypt {
 		$this->_CI->config->load('mycrypt');
 
 		$this->hash_method = $this->_CI->config->item('mycrypt_hash_method');
-		$this->private_key = $this->_CI->config->item('mycrypt_private_key');
+		$this->private_key = $this->_CI->config->item('encryption_key');
 		$this->digit_sum = $this->_CI->config->item('mycrypt_digit_sum');
 		$this->digit_api_key = $this->_CI->config->item('mycrypt_digit_api_key');
 		$this->charset = $this->_CI->config->item('mycrypt_charset');

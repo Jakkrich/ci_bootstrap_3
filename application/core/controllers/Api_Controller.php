@@ -21,7 +21,6 @@ class API_Controller extends REST_Controller {
 		$this->_CI =& get_instance();
 		$this->_CI->load->helper('http_response');
 		$this->_CI->load->library('mycrypt');
-		$this->_CI->load->config('api_master_key');
 		// send PHP headers when necessary (e.g. enable CORS)
 		$config = $this->config->item('ci_bootstrap');
 		$headers = empty($config['headers']) ? array() : $config['headers'];
@@ -31,13 +30,15 @@ class API_Controller extends REST_Controller {
 		}
 
 		if($this->mUseIdentityByApiKey){$this->verify_api();}
-		$this->verify_token();
+		if($this->mUseIdentityByApiKey){$this->verify_token();}
 
 	}
 
 	protected function verify_api(){
-		$key = $this->input->get_request_header('X-API-KEY');
-
+		$api_key_variable = $this->config->item('rest_key_name');
+		$key = $this->input->get_request_header($api_key_variable);
+		$key_gey = $this->input->get('api_key');
+		$key = (!empty($key)?$key:$key_gey);
 		$pass = $this->_CI->mycrypt->ValidateAPI($key);
 		if($pass !== TRUE){
 			$this->error_unauthorized();
@@ -49,7 +50,7 @@ class API_Controller extends REST_Controller {
 	{
 		// lookup API Key record by value from HTTP header
 		$key = $this->input->get_request_header('X-API-KEY');
-		$this->mApiKey = $this->api_keys->get_by('key', $key);
+		$this->mApiKey = $this->_CI->api_key_model->get_by('key', $key);
 
 		if ( !empty($this->mApiKey) )
 		{
@@ -68,12 +69,6 @@ class API_Controller extends REST_Controller {
 				// anonymous access via API Key
 				$this->mUserMainGroup = 'anonymous';
 			}
-		}
-
-		if($this->_CI->config->item('api_master_key') == $key)
-		{
-			// administrator access via API Key
-			$this->mUserMainGroup = 'admin';
 		}
 	}
 

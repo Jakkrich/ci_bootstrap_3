@@ -1,6 +1,5 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');
 /*
-* https://github.com/avenirer/CodeIgniter-MY_Model
 * Copyright (C) 2014 @avenirer [avenir.ro@gmail.com]
 * Everyone is permitted to copy and distribute verbatim or modified copies of this license document,
 * and changing it is allowed as long as the name is changed.
@@ -31,8 +30,8 @@
  *              Sets the connection preferences (group name) set up in the database.php. If not trset, it will use the
  *              'default' (the $active_group) database connection.
  *          $this->timestamps = TRUE | array('made_at','modified_at','removed_at')
- *              If set to TRUE tells MY_Model that the table has 'create_date','write_date' (and 'unlink_date' if $this->soft_delete is set to TRUE)
- *              If given an array as parameter, it tells MY_Model, that the first element is a create_date field type, the second element is a write_date field type (and the third element is a unlink_date field type)
+ *              If set to TRUE tells MY_Model that the table has 'created_at','updated_at' (and 'deleted_at' if $this->soft_delete is set to TRUE)
+ *              If given an array as parameter, it tells MY_Model, that the first element is a created_at field type, the second element is a updated_at field type (and the third element is a deleted_at field type)
  *          $this->soft_deletes = FALSE;
  *              Enables (TRUE) or disables (FALSE) the "soft delete" on records. Default is FALSE
  *          $this->timestamps_format = 'Y-m-d H:i:s'
@@ -69,9 +68,7 @@
  *
  **/
 
-require APPPATH."core/Base_Model.php";
-
-class MY_Model extends Base_Model
+class MY_Model extends CI_Model
 {
 
     /**
@@ -83,7 +80,7 @@ class MY_Model extends Base_Model
     /** @var
      * This one will hold the database connection object
      */
-    public $_database;
+    protected $_database;
 
     /** @var null
      * Sets table name
@@ -114,14 +111,14 @@ class MY_Model extends Base_Model
 
 
     /** @var bool | array
-     * Enables create_date and write_date fields
+     * Enables created_at and updated_at fields
      */
     protected $timestamps = TRUE;
     protected $timestamps_format = 'Y-m-d H:i:s';
 
-    protected $_create_date_field;
-    protected $_write_date_field;
-    protected $_unlink_date_field;
+    protected $_created_at_field;
+    protected $_updated_at_field;
+    protected $_deleted_at_field;
 
     /** @var bool
      * Enables soft_deletes
@@ -163,8 +160,8 @@ class MY_Model extends Base_Model
     protected $after_create = array();
     protected $before_update = array();
     protected $after_update = array();
-    protected $before_get = array('callback_before_get');
-  	protected $after_get = array('callback_after_get');
+    protected $before_get = array();
+    protected $after_get = array();
     protected $before_delete = array();
     protected $after_delete = array();
     protected $before_soft_delete = array();
@@ -180,22 +177,13 @@ class MY_Model extends Base_Model
 
     private $_select = '*';
 
-    // Variables from CI Bootstrap (see demo repo for examples)
-  	protected $where = array();
-  	protected $order_by = array();
-  	protected $upload_fields = array();
 
     public function __construct()
     {
         parent::__construct();
-        date_default_timezone_set('Asia/Bangkok');
-        date_default_timezone_set('UTC');
-
         $this->_set_connection();
         $this->_set_timestamps();
-        if (!is_null($this->table)){
-            $this->_fetch_table();
-        }
+        $this->_fetch_table();
         $this->pagination_delimiters = (isset($this->pagination_delimiters)) ? $this->pagination_delimiters : array('<span>','</span>');
         $this->pagination_arrows = (isset($this->pagination_arrows)) ? $this->pagination_arrows : array('&lt;','&gt;');
         /* These below are implementation examples for before_create and before_update triggers.
@@ -379,12 +367,12 @@ class MY_Model extends Base_Model
     }
 
     /**
-     * public function create($data)
+     * public function insert($data)
      * Inserts data into table. Can receive an array or a multidimensional array depending on what kind of insert we're talking about.
      * @param $data
      * @return int/array Returns id/ids of inserted rows
      */
-    public function create($data = NULL)
+    public function insert($data = NULL)
     {
         if(!isset($data) && $this->validated!=FALSE)
         {
@@ -405,8 +393,7 @@ class MY_Model extends Base_Model
         {
             if($this->timestamps !== FALSE)
             {
-                $data[$this->_create_date_field] = $this->_the_timestamp();
-                $data[$this->_write_date_field] = $data[$this->_create_date_field];
+                $data[$this->_created_at_field] = $this->_the_timestamp();
             }
             $data = $this->trigger('before_create',$data);
             if($this->_database->insert($this->table, $data))
@@ -426,8 +413,7 @@ class MY_Model extends Base_Model
             {
                 if($this->timestamps !== FALSE)
                 {
-                    $row[$this->_create_date_field] = $this->_the_timestamp();
-                    $row[$this->_write_date_field] = $row[$this->_create_date_field];
+                    $row[$this->_created_at_field] = $this->_the_timestamp();
                 }
                 $row = $this->trigger('before_create',$row);
                 if($this->_database->insert($this->table,$row))
@@ -499,7 +485,7 @@ class MY_Model extends Base_Model
         {
             if($this->timestamps !== FALSE)
             {
-                $data[$this->_write_date_field] = $this->_the_timestamp();
+                $data[$this->_updated_at_field] = $this->_the_timestamp();
             }
             $data = $this->trigger('before_update',$data);
             if($this->validated === FALSE && count($this->row_fields_to_update))
@@ -549,7 +535,7 @@ class MY_Model extends Base_Model
             {
                 if($this->timestamps !== FALSE)
                 {
-                    $row[$this->_write_date_field] = $this->_the_timestamp();
+                    $row[$this->_updated_at_field] = $this->_the_timestamp();
                 }
                 $row = $this->trigger('before_update',$row);
                 if(is_array($column_name_where))
@@ -754,7 +740,7 @@ class MY_Model extends Base_Model
                 foreach($to_update as &$row)
                 {
                     //$row = $this->trigger('before_soft_delete',$row);
-                    $row[$this->_unlink_date_field] = $this->_the_timestamp();
+                    $row[$this->_deleted_at_field] = $this->_the_timestamp();
                 }
                 $affected_rows = $this->_database->update_batch($this->table, $to_update, $this->primary_key);
                 $to_update['affected_rows'] = $affected_rows;
@@ -814,7 +800,7 @@ class MY_Model extends Base_Model
         {
             $this->where($where);
         }
-        if($affected_rows = $this->_database->update($this->table,array($this->_unlink_date_field=>NULL)))
+        if($affected_rows = $this->_database->update($this->table,array($this->_deleted_at_field=>NULL)))
         {
             $this->_prep_after_write();
             return $affected_rows;
@@ -1568,10 +1554,10 @@ class MY_Model extends Base_Model
         switch($this->_trashed)
         {
             case 'only' :
-                $this->_database->where($this->table.'.'.$this->_unlink_date_field.' IS NOT NULL', NULL, FALSE);
+                $this->_database->where($this->table.'.'.$this->_deleted_at_field.' IS NOT NULL', NULL, FALSE);
                 break;
             case 'without' :
-                $this->_database->where($this->table.'.'.$this->_unlink_date_field.' IS NULL', NULL, FALSE);
+                $this->_database->where($this->table.'.'.$this->_deleted_at_field.' IS NULL', NULL, FALSE);
                 break;
             case 'with' :
                 break;
@@ -1751,16 +1737,16 @@ class MY_Model extends Base_Model
     /**
      * private function _set_timestamps()
      *
-     * Sets the fields for the create_date, write_date and unlink_date timestamps
+     * Sets the fields for the created_at, updated_at and deleted_at timestamps
      * @return bool
      */
     private function _set_timestamps()
     {
         if($this->timestamps !== FALSE)
         {
-            $this->_create_date_field = (is_array($this->timestamps) && isset($this->timestamps[0])) ? $this->timestamps[0] : 'create_date';
-            $this->_write_date_field =  (is_array($this->timestamps) && isset($this->timestamps[1])) ? $this->timestamps[1] : 'write_date';
-            $this->_unlink_date_field = (is_array($this->timestamps) && isset($this->timestamps[2])) ? $this->timestamps[2] : 'unlink_date';
+            $this->_created_at_field = (is_array($this->timestamps) && isset($this->timestamps[0])) ? $this->timestamps[0] : 'created_at';
+            $this->_updated_at_field = (is_array($this->timestamps) && isset($this->timestamps[1])) ? $this->timestamps[1] : 'updated_at';
+            $this->_deleted_at_field = (is_array($this->timestamps) && isset($this->timestamps[2])) ? $this->timestamps[2] : 'deleted_at';
         }
         return TRUE;
     }
@@ -2081,84 +2067,6 @@ class MY_Model extends Base_Model
     }
 
 
-    /**
-     * Extra functions on top of Base_Model
-     */
-
-    // Select specific fields only
-    // Usage: $this->article_model->select('id, title')->get_all();
-    // Reference: https://github.com/jamierumbelow/codeigniter-base-model/issues/217
-    public function select($fields = '*', $escape = true) {
-      if ( is_array($fields) )
-        $fields = implode(',', $fields);
-
-      $this->_database->select($fields, $escape);
-      return $this;
-    }
-
-    // Get a field value from single result (by ID)
-    public function get_field($id, $field)
-    {
-      $this->db->select($field);
-      $record = $this->get($id);
-      return (empty($record) || empty($record->$field)) ? NULL : $record->$field;
-    }
-
-    // update a field value
-    public function update_field($id, $field, $value, $escape = TRUE)
-    {
-      // note: use CodeIgniter Query Builder instead of Base_model update() function, which does not allow escape set as FALSE
-      $this->db->set($field, $value, $escape);
-      $this->db->where($this->primary_key, $id);
-      return $this->db->update($this->_table);
-    }
-
-    // increment a field value
-    public function increment_field($id, $field, $diff = 1)
-    {
-      return $this->update_field($id, $field, $field.'+'.$diff, FALSE);
-    }
-
-    // decrement a field value
-    public function decrement_field($id, $field, $diff = 1)
-    {
-      return $this->update_field($id, $field, $field.'-'.$diff, FALSE);
-    }
-
-    /**
-     * Callback functions
-     */
-    protected function callback_before_get($result)
-    {
-      // default filter
-      if ( !empty($this->where) )
-        $this->db->where($this->where);
-
-      // default order
-      switch (count($this->order_by))
-      {
-        case 1: $this->db->order_by($this->order_by[0]); break;
-        case 2: $this->db->order_by($this->order_by[0], $this->order_by[1]); break;
-        case 3: $this->db->order_by($this->order_by[0], $this->order_by[1], $this->order_by[2]); break;
-      }
-    }
-
-    protected function callback_after_get($result)
-    {
-      // prepend folder path to upload assets
-      if ( !empty($this->upload_fields) )
-      {
-        foreach ($this->upload_fields as $key => $folder)
-        {
-          if ( !empty($result->$key) )
-          {
-            $result->$key = base_url($folder.'/'.$result->$key);
-          }
-        }
-      }
-
-      return $result;
-    }
     /*
     public function add_creator($data)
     {

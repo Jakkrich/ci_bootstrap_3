@@ -4,7 +4,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
  * Changes by CI Bootstrap 3 (https://github.com/waifung0207/ci_bootstrap_3).
- * 
+ *
  * The following values are changed to fit with CI Bootstrap:
  *  - $config['rest_keys_table'] = 'api_keys'; (default: 'keys')
  *  - $config['rest_logs_table'] = 'api_logs'; (default: 'logs')
@@ -74,6 +74,8 @@ $config['rest_supported_formats'] = [
 */
 $config['rest_status_field_name'] = 'status';
 
+
+$config['rest_data_field_name'] = 'data';
 /*
 |--------------------------------------------------------------------------
 | REST Message Field Name
@@ -136,7 +138,7 @@ $config['rest_auth'] = FALSE;
 | Note: If 'rest_auth' is set to 'session' then change 'auth_source' to the name of the session variable
 |
 */
-$config['auth_source'] = 'ldap';
+$config['auth_source'] = '';
 
 /*
 |--------------------------------------------------------------------------
@@ -197,6 +199,7 @@ $config['auth_library_function'] = '';
 // ---Uncomment list line for the wildard unit test
 // $config['auth_override_class_method']['wildcard_test_cases']['*'] = 'basic';
 $config['auth_override_class_method']['dummy']['*'] = 'none';
+$config['auth_override_class_method']['key']['*'] = 'none';
 
 /*
 |--------------------------------------------------------------------------
@@ -324,7 +327,7 @@ $config['rest_keys_table'] = 'api_keys';
 |   ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 |
 */
-$config['rest_enable_keys'] = FALSE;
+$config['rest_enable_keys'] = TRUE;
 
 /*
 |--------------------------------------------------------------------------
@@ -363,7 +366,7 @@ $config['rest_limits_method'] = 'ROUTED_URL';
 | Note: The maximum length is 40
 |
 */
-$config['rest_key_length'] = 40;
+$config['rest_key_length'] = 64;
 
 /*
 |--------------------------------------------------------------------------
@@ -403,7 +406,7 @@ $config['rest_key_name'] = 'X-API-KEY';
 |   ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 |
 */
-$config['rest_enable_logging'] = FALSE;
+$config['rest_enable_logging'] = TRUE;
 
 /*
 |--------------------------------------------------------------------------
@@ -485,7 +488,7 @@ $config['rest_logs_json_params'] = FALSE;
 |
 | See application/controllers/api/example.php for examples
 */
-$config['rest_enable_limits'] = FALSE;
+$config['rest_enable_limits'] = TRUE;
 
 /*
 |--------------------------------------------------------------------------

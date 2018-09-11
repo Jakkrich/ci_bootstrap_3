@@ -476,6 +476,12 @@ abstract class REST_Controller extends MX_Controller {
 
         $this->{'_parse_' . $this->request->method}();
 
+        // Fix parse method return arguments null
+        if($this->{'_'.$this->request->method.'_args'} === null)
+        {
+            $this->{'_'.$this->request->method.'_args'} = [];
+        }
+
         // Now we know all about our request, let's try and parse the body if it exists
         if ($this->request->format && $this->request->body)
         {
@@ -650,8 +656,8 @@ abstract class REST_Controller extends MX_Controller {
             {
                 $this->_log_request();
             }
-            
-            // fix cross site to option request error 
+
+            // fix cross site to option request error
             if($this->request->method == 'options') {
                 exit;
             }
@@ -733,6 +739,10 @@ abstract class REST_Controller extends MX_Controller {
         }
         catch (Exception $ex)
         {
+            if ($this->config->item('rest_handle_exceptions') === FALSE) {
+                throw $ex;
+            }
+
             // If the method doesn't exist, then the error will be caught and an error response shown
 	        $_error = &load_class('Exceptions', 'core');
 	        $_error->show_exception($ex);
